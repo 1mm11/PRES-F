@@ -3,61 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fighter Database</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Fighter Base</title>
+    <style>
+        /* Базовые стили и переменные для тем (Светлая / Темная) */
+        :root {
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #fff;
+            --primary: #e63946;
+            --secondary: #1d3557;
+            --border-radius: 12px;
+            --shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #f1f1f1;
+            --card-bg: #1e1e1e;
+            --primary: #ff4d5a;
+            --secondary: #a8b2d1;
+            --shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Навигация */
+        header {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
+        
+        .controls { display: flex; gap: 15px; align-items: center; }
+        button {
+            padding: 8px 16px; border: none; border-radius: 6px;
+            cursor: pointer; background-color: var(--secondary);
+            color: white; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { opacity: 0.8; }
+        .btn-primary { background-color: var(--primary); }
+        .admin-only { display: none; } /* Скрыто по умолчанию */
+
+        /* Сетка бойцов */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .fighters-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;
+        }
+
+        /* Карточка бойца */
+        .fighter-card {
+            background: var(--card-bg); border-radius: var(--border-radius);
+            padding: 20px; box-shadow: var(--shadow); text-align: center;
+            transition: transform 0.2s;
+        }
+        .fighter-card:hover { transform: translateY(-5px); }
+        .fighter-photo {
+            width: 150px; height: 150px; border-radius: 50%; object-fit: cover;
+            border: 4px solid var(--primary); margin-bottom: 15px;
+        }
+        .stats { display: flex; justify-content: space-around; margin: 15px 0; font-weight: bold; }
+        .win { color: #2a9d8f; } .loss { color: #e63946; }
+        
+        /* Титулы */
+        .titles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px;}
+        .title-badge {
+            padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.05);
+        }
+
+        /* Модальные окна */
+        dialog {
+            background: var(--card-bg); color: var(--text-color);
+            border: none; border-radius: var(--border-radius); box-shadow: var(--shadow);
+            padding: 30px; width: 90%; max-width: 400px; text-align: left;
+        }
+        dialog::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); }
+        input, select {
+            width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box;
+            border-radius: 6px; border: 1px solid #ccc;
+        }
+        .close-btn { background: #ccc; color: #333; margin-top: 10px; width: 100%; }
+        
+        /* Список боев */
+        .fight-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;}
+        .fight-item a { color: var(--primary); text-decoration: none; }
+    </style>
 </head>
-<body class="light-theme">
+<body>
+
     <header>
-        <nav>
-            <div class="logo" id="lang-title">Список Бойцов</div>
-            <div class="controls">
-                <select id="lang-select">
-                    <option value="uk">UA</option>
-                    <option value="en">EN</option>
-                </select>
-                <button id="theme-toggle">🌙/☀️</button>
-                <button id="login-btn">Login</button>
-                <button id="admin-add-btn" class="hidden">Добавить бойца</button>
-            </div>
-        </nav>
+        <div class="logo">🥊 FightBase</div>
+        <div class="controls">
+            <select id="langSelect">
+                <option value="uk">Укр</option>
+                <option value="en">Eng</option>
+            </select>
+            <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+            <button id="loginBtn" onclick="showLogin()">🔐 <span class="t-login">Увійти</span></button>
+            <button id="logoutBtn" onclick="logout()" style="display: none;">🔓 <span class="t-logout">Вийти</span></button>
+        </div>
     </header>
 
-    <main id="fighters-list">
-        </main>
-
-    <div id="login-modal" class="modal hidden">
-        <div class="modal-content">
-            <h2 id="lang-login-title">Вход для Админа</h2>
-            <input type="text" id="login-user" placeholder="Username">
-            <input type="password" id="login-pass" placeholder="Password">
-            <button id="auth-submit">Войти</button>
-            <button class="close-modal">Отмена</button>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 class="t-roster">Список Бійців</h1>
+            <button class="btn-primary admin-only t-add-fighter" onclick="showAddFighter()">+ Додати бійця</button>
         </div>
-    </div>
-
-    <div id="fighter-modal" class="modal hidden">
-        <div class="modal-content">
-            <h2 id="modal-title">Боец</h2>
-            <input type="text" id="f-name" placeholder="Имя">
-            <input type="number" id="f-year" placeholder="Год рождения">
-            <input type="number" id="f-wins" placeholder="Побед">
-            <input type="number" id="f-losses" placeholder="Поражений">
-            <input type="file" id="f-photo" accept="image/*">
-            
-            <div class="titles-section">
-                <h4>Титулы</h4>
-                <input type="text" id="t-text" placeholder="Текст титула">
-                <input type="color" id="t-color" value="#ffd700">
-                <input type="text" id="t-emoji" placeholder="Emoji (🏆)">
-                <button id="add-title-btn">Добавить титул в список</button>
-                <div id="temp-titles"></div>
+        
+        <div class="fighters-grid" id="fightersGrid">
             </div>
-
-            <button id="save-fighter">Сохранить</button>
-            <button class="close-modal">Закрыть</button>
-        </div>
     </div>
 
-    <script type="module" src="app.js"></script>
+    <dialog id="loginModal">
+        <h2 class="t-admin-login">Вхід для Адміна</h2>
+        <input type="text" id="username" placeholder="Логін">
+        <input type="password" id="password" placeholder="Пароль">
+        <button class="btn-primary" onclick="login()" style="width: 100%;">Увійти</button>
+        <button class="close-btn" onclick="document.getElementById('loginModal').close()">Скасувати</button>
+    </dialog>
+
+    <dialog id="addFighterModal">
+        <h2 class="t-add-fighter">Додати бійця</h2>
+        <input type="text" id="fName" placeholder="Ім'я бійця">
+        <input type="number" id="fYear" placeholder="Рік народження">
+        <input type="number" id="fWins" placeholder="Перемог" value="0">
+        <input type="number" id="fLosses" placeholder="Поразок" value="0">
+        
+        <p style="margin: 10px 0 0; font-size: 14px;">Фото (файл):</p>
+        <input type="file" id="fPhotoFile" accept="image/*">
+        
+        <button class="btn-primary" onclick="saveFighter()" style="width: 100%; margin-top: 15px;">Зберегти</button>
+        <button class="close-btn" onclick="document.getElementById('addFighterModal').close()">Скасувати</button>
+    </dialog>
+
+    <script type="module">
+        // 1. ИМПОРТ ИЗ FIREBASE (используем версию 10.8.1 CDN для работы без npm)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+        // Твой конфиг
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFYWJavux5oegrdxT4CUV5DlXJqM6AiGo",
+            authDomain: "boiii-d61d9.firebaseapp.com",
+            databaseURL: "https://boiii-d61d9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "boiii-d61d9",
+            storageBucket: "boiii-d61d9.firebasestorage.app",
+            messagingSenderId: "671885912489",
+            appId: "1:671885912489:web:3b6cfbdefa98d974debcb8",
+            measurementId: "G-6VMNEVZXE1"
+        };
+
+        // Инициализация
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        // Глобальные переменные
+        window.isAdmin = false;
+        let fightersData = {};
+
+        // 2. СИСТЕМА ПЕРЕВОДОВ (Словари)
+        const dict = {
+            uk: {
+                "t-login": "Увійти", "t-logout": "Вийти", "t-roster": "Список Бійців",
+                "t-add-fighter": "+ Додати бійця", "t-admin-login": "Вхід для Адміна",
+                "t-wins": "Перемоги", "t-losses": "Поразки", "t-year": "Рік: ",
+                "t-view-fights": "Дивитись бої"
+            },
+            en: {
+                "t-login": "Login", "t-logout": "Logout", "t-roster": "Fighters Roster",
+                "t-add-fighter": "+ Add Fighter", "t-admin-login": "Admin Login",
+                "t-wins": "Wins", "t-losses": "Losses", "t-year": "Born: ",
+                "t-view-fights": "View Fights"
+            }
+        };
+
+        let currentLang = 'uk';
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            updateUI();
+            renderFighters(); // Перерисовываем с нужным языком
+        });
+
+        function updateUI() {
+            document.querySelectorAll('[class^="t-"]').forEach(el => {
+                const key = Array.from(el.classList).find(c => c.startsWith('t-'));
+                if(dict[currentLang][key]) el.innerText = dict[currentLang][key];
+            });
+        }
+
+        // 3. ТЕМА (Светлая / Темная)
+        window.toggleTheme = function() {
+            const body = document.body;
+            if(body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                document.getElementById('themeToggle').innerText = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').innerText = '☀️';
+            }
+        };
+
+        // 4. ЛОГИН И АДМИНКА
+        window.showLogin = () => document.getElementById('loginModal').showModal();
+        
+        window.login = () => {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (u === 'Admin' && p === 'vlad01032014v') {
+                window.isAdmin = true;
+                document.getElementById('loginModal').close();
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
+                alert(currentLang === 'uk' ? 'Успішний вхід!' : 'Login successful!');
+                renderFighters(); // Показать кнопки админа на карточках
+            } else {
+                alert(currentLang === 'uk' ? 'Невірний пароль!' : 'Wrong password!');
+            }
+        };
+
+        window.logout = () => {
+            window.isAdmin = false;
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            renderFighters();
+        };
+
+        // 5. РАБОТА С БАЗОЙ ДАННЫХ (Отрисовка и добавление)
+        const fightersRef = ref(db, 'fighters');
+
+        // Слушаем изменения в базе в реальном времени!
+        onValue(fightersRef, (snapshot) => {
+            fightersData = snapshot.val() || {};
+            renderFighters();
+        });
+
+        window.renderFighters = () => {
+            const grid = document.getElementById('fightersGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(fightersData).forEach(id => {
+                const f = fightersData[id];
+                
+                // Генерация HTML титулов
+                let titlesHTML = '';
+                if(f.titles) {
+                    Object.values(f.titles).forEach(t => {
+                        titlesHTML += `<span class="title-badge" style="color: ${t.color}; border: 1px solid ${t.color}">
+                            ${t.emoji} ${t.text}
+                        </span>`;
+                    });
+                }
+
+                // Кнопки админа для каждого бойца
+                const adminBtns = window.isAdmin ? `
+                    <button onclick="addTitlePrompt('${id}')" style="font-size:12px; margin-top:10px;">+ Титул</button>
+                    <button onclick="addFightPrompt('${id}')" style="font-size:12px; margin-top:10px;">+ Бій</button>
+                ` : '';
+
+                const card = `
+                    <div class="fighter-card">
+                        <img src="${f.photo || 'https://via.placeholder.com/150'}" alt="${f.name}" class="fighter-photo">
+                        <h2>${f.name}</h2>
+                        <p style="color: gray; font-size: 14px;">${dict[currentLang]['t-year']}${f.birthYear}</p>
+                        
+                        <div class="titles">${titlesHTML}</div>
+
+                        <div class="stats">
+                            <span class="win">${dict[currentLang]['t-wins']}: ${f.wins}</span>
+                            <span class="loss">${dict[currentLang]['t-losses']}: ${f.losses}</span>
+                        </div>
+                        
+                        <button class="btn-primary" onclick="alert('Тут буде відкриватись модалка з відео!')">${dict[currentLang]['t-view-fights']}</button>
+                        <br>
+                        ${adminBtns}
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        };
+
+        // Добавление бойца с фото
+        window.showAddFighter = () => document.getElementById('addFighterModal').showModal();
+
+        window.saveFighter = async () => {
+            const name = document.getElementById('fName').value;
+            const year = document.getElementById('fYear').value;
+            const wins = document.getElementById('fWins').value;
+            const losses = document.getElementById('fLosses').value;
+            const fileInput = document.getElementById('fPhotoFile');
+            
+            if(!name || !year) return alert("Введіть ім'я та рік!");
+            
+            let photoUrl = "";
+            const newFighterRef = push(fightersRef);
+
+            // Если выбран файл, загружаем в Storage
+            if(fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const sRef = storageRef(storage, 'fighters_photos/' + newFighterRef.key + '_' + file.name);
+                await uploadBytes(sRef, file);
+                photoUrl = await getDownloadURL(sRef);
+            }
+
+            // Сохраняем в Realtime Database
+            await set(newFighterRef, {
+                name: name,
+                birthYear: year,
+                wins: wins,
+                losses: losses,
+                photo: photoUrl
+            });
+
+            document.getElementById('addFighterModal').close();
+        };
+
+        // Добавление кастомного титула (Упрощенный вариант через prompt для примера)
+        window.addTitlePrompt = (fighterId) => {
+            const text = prompt("Назва титулу (напр. Чемпіон світу):");
+            if(!text) return;
+            const emoji = prompt("Смайлик (напр. 👑):", "👑");
+            const color = prompt("Колір тексту (напр. red, #ffcc00):", "#ffcc00");
+
+            const titleRef = push(ref(db, `fighters/${fighterId}/titles`));
+            set(titleRef, { text, emoji, color });
+        };
+        
+        // Добавление боя
+        window.addFightPrompt = (fighterId) => {
+             const title = prompt("Назва бою (напр. Бій 1):");
+             if(!title) return;
+             const link = prompt("Посилання на відео (YouTube):");
+             
+             const fightRef = push(ref(db, `fighters/${fighterId}/fights`));
+             set(fightRef, { title, link });
+        };
+
+        // Инициализация языка при загрузке
+        updateUI();
+    </script>
 </body>
 </html>
