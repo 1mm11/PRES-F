@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fighter Base & Personnel</title>
+    <title>Fight Platform</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -27,11 +27,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            transition: background 0.3s, color 0.3s;
+            transition: 0.3s;
         }
 
         header {
@@ -41,16 +41,13 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow);
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
+            flex-wrap: wrap; gap: 10px;
         }
 
-        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
-        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .controls { display: flex; gap: 10px; align-items: center; }
         
         button {
-            padding: 8px 16px; border: none; border-radius: 6px;
+            padding: 10px 18px; border: none; border-radius: 8px;
             cursor: pointer; background-color: var(--secondary);
             color: white; font-weight: bold; transition: 0.2s;
         }
@@ -59,149 +56,104 @@
         .btn-success { background-color: var(--success); }
         .admin-only { display: none; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .fighters-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
         }
 
         .fighter-card {
             background: var(--card-bg); border-radius: var(--border-radius);
             padding: 20px; box-shadow: var(--shadow); text-align: center;
-            transition: transform 0.2s; position: relative;
         }
-        .fighter-card:hover { transform: translateY(-5px); }
         .fighter-photo {
-            width: 150px; height: 150px; border-radius: 50%; object-fit: cover;
-            border: 4px solid var(--primary); margin-bottom: 15px;
-        }
-        .role-badge {
-            background: var(--secondary); color: #fff; padding: 4px 10px; 
-            border-radius: 20px; font-size: 12px; display: inline-block; margin-bottom: 10px;
-        }
-        .stats { display: flex; justify-content: space-around; margin: 15px 0; font-weight: bold; }
-        .win { color: var(--success); } .loss { color: var(--primary); }
-        
-        .titles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px;}
-        .title-badge {
-            padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
-            display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.05);
+            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--primary); margin-bottom: 10px;
         }
 
         dialog {
             background: var(--card-bg); color: var(--text-color);
-            border: none; border-radius: var(--border-radius); box-shadow: var(--shadow);
-            padding: 30px; width: 90%; max-width: 450px; text-align: left; max-height: 90vh; overflow-y: auto;
+            border: none; border-radius: 15px; padding: 25px; width: 90%; max-width: 400px;
         }
-        dialog::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); }
         input, select, textarea {
-            width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box;
-            border-radius: 6px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color);
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
+            border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color);
         }
-        .close-btn { background: #ccc; color: #333; margin-top: 10px; width: 100%; }
-        
-        .request-item, .schedule-item { 
-            border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 15px;
-            background: var(--bg-color);
-        }
-        
-        .admin-card-controls {
-            display: flex; justify-content: center; gap: 5px; margin-top: 15px; flex-wrap: wrap;
-        }
-        .admin-card-controls button { font-size: 12px; padding: 5px 10px; }
+        .user-info { font-weight: bold; color: var(--success); margin-right: 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">🥊 FightBase</div>
+        <div class="logo" style="font-size:22px; font-weight:bold;">🥊 FIGHT PRO</div>
         <div class="controls">
+            <span id="userInfo" class="user-info"></span>
             <select id="langSelect">
-                <option value="uk">Укр</option>
-                <option value="en">Eng</option>
+                <option value="uk">UA</option>
+                <option value="en">EN</option>
             </select>
-            <button id="themeToggle" onclick="toggleTheme()">🌙</button>
-            <button onclick="showSchedule()">📅 <span class="t-schedule">Розклад</span></button>
-            <button id="registerBtn" onclick="showRegister()">📝 <span class="t-register">Реєстрація</span></button>
-            <button id="loginBtn" onclick="showLogin()">🔐 <span class="t-login">Увійти</span></button>
+            <button onclick="toggleTheme()">🌓</button>
+            <button onclick="showSchedule()">📅 Розклад</button>
+            <button id="regBtn" onclick="document.getElementById('registerModal').showModal()">📝 Реєстрація</button>
+            <button id="loginBtn" onclick="document.getElementById('loginModal').showModal()">🔐 Увійти</button>
             
-            <button id="requestsBtn" class="admin-only btn-success" onclick="showRequests()">📩 <span class="t-requests">Заявки</span> (<span id="reqCount">0</span>)</button>
-            <button id="logoutBtn" onclick="logout()" style="display: none;">🔓 <span class="t-logout">Вийти</span></button>
+            <button id="adminAddBtn" class="admin-only btn-primary" onclick="document.getElementById('manualAddModal').showModal()">+ Додати учасника</button>
+            <button id="adminReqBtn" class="admin-only btn-success" onclick="showRequests()">Заявки (<span id="reqCount">0</span>)</button>
+            <button id="logoutBtn" style="display:none;" onclick="logout()">Вийти</button>
         </div>
     </header>
 
     <div class="container">
-        <h1 class="t-roster">Список Учасників</h1>
+        <h2 id="pageTitle">Список Учасників</h2>
         <div class="fighters-grid" id="fightersGrid"></div>
     </div>
 
     <dialog id="loginModal">
-        <h2 class="t-admin-login">Вхід для Адміна</h2>
-        <input type="text" id="username" placeholder="Логін">
-        <input type="password" id="password" placeholder="Пароль">
-        <button class="btn-primary" onclick="login()" style="width: 100%;">Увійти</button>
-        <button class="close-btn" onclick="document.getElementById('loginModal').close()">Скасувати</button>
+        <h2>Вхід у систему</h2>
+        <p style="font-size: 12px; color: gray;">Адмін вводить свій пароль. Учасники вводять своє Ім'я (після підтвердження).</p>
+        <input type="text" id="loginName" placeholder="Ваше Ім'я (або Admin)">
+        <input type="password" id="loginPass" placeholder="Пароль (тільки для Admin)">
+        <button class="btn-primary" style="width:100%" onclick="handleLogin()">Увійти</button>
+        <button style="width:100%; margin-top:5px;" onclick="this.closest('dialog').close()">Закрити</button>
     </dialog>
 
     <dialog id="registerModal">
-        <h2 class="t-register-title">Реєстрація учасника</h2>
-        <select id="regRole" onchange="toggleEquipmentField()">
+        <h2>Подати заявку</h2>
+        <select id="regRole">
             <option value="fighter">Боєць</option>
             <option value="judge">Суддя</option>
             <option value="operator">Оператор</option>
         </select>
-        <input type="text" id="regName" placeholder="ПІБ або Нікнейм">
+        <input type="text" id="regName" placeholder="Ім'я та Прізвище">
         <input type="number" id="regYear" placeholder="Рік народження">
-        <div id="equipmentDiv" style="display: none;">
-            <input type="text" id="regEquipment" placeholder="На що будете знімати?">
-        </div>
-        <p style="margin: 10px 0 0; font-size: 14px;">Фото (обов'язково):</p>
         <input type="file" id="regPhoto" accept="image/*">
-        <button class="btn-success" onclick="submitRegistration()" style="width: 100%; margin-top: 15px;">Відправити заявку</button>
-        <button class="close-btn" onclick="document.getElementById('registerModal').close()">Скасувати</button>
+        <button class="btn-success" style="width:100%" onclick="submitRegistration()">Відправити</button>
+        <button style="width:100%; margin-top:5px;" onclick="this.closest('dialog').close()">Скасувати</button>
     </dialog>
 
-    <dialog id="scheduleModal">
-        <h2 class="t-schedule">Розклад боїв</h2>
-        <button class="admin-only btn-success" onclick="showAddSchedule()" style="width:100%; margin-bottom:15px;">+ Додати бій у розклад</button>
-        <div id="scheduleList"></div>
-        <button class="close-btn" onclick="document.getElementById('scheduleModal').close()">Закрити</button>
-    </dialog>
-
-    <dialog id="addScheduleModal">
-        <h2>Новий бій</h2>
-        <input type="text" id="schTime" placeholder="Час та Дата (напр. 25.05 18:00)">
-        <textarea id="schDesc" placeholder="Опис бою (хто б'ється, назва турніру)"></textarea>
-        <button class="btn-primary" onclick="saveSchedule()" style="width: 100%;">Зберегти</button>
-        <button class="close-btn" onclick="document.getElementById('addScheduleModal').close()">Скасувати</button>
+    <dialog id="manualAddModal">
+        <h2>Додати учасника вручну</h2>
+        <select id="manRole">
+            <option value="fighter">Боєць</option>
+            <option value="judge">Суддя</option>
+            <option value="operator">Оператор</option>
+        </select>
+        <input type="text" id="manName" placeholder="Ім'я">
+        <input type="number" id="manYear" placeholder="Рік">
+        <input type="file" id="manPhoto" accept="image/*">
+        <button class="btn-primary" style="width:100%" onclick="adminManualAdd()">Додати негайно</button>
+        <button style="width:100%; margin-top:5px;" onclick="this.closest('dialog').close()">Скасувати</button>
     </dialog>
 
     <dialog id="requestsModal">
-        <h2>Заявки на вступ</h2>
+        <h2>Заявки на підтвердження</h2>
         <div id="requestsList"></div>
-        <button class="close-btn" onclick="document.getElementById('requestsModal').close()">Закрити</button>
-    </dialog>
-
-    <dialog id="editModal">
-        <h2>Редагувати дані</h2>
-        <input type="hidden" id="editId">
-        <select id="editRole">
-            <option value="fighter">Боєць</option>
-            <option value="judge">Суддя</option>
-            <option value="operator">Оператор</option>
-        </select>
-        <input type="text" id="editName" placeholder="Ім'я">
-        <input type="number" id="editYear" placeholder="Рік народження">
-        <input type="text" id="editEquipment" placeholder="Обладнання">
-        <input type="number" id="editWins" placeholder="Перемог">
-        <input type="number" id="editLosses" placeholder="Поразок">
-        <button class="btn-primary" onclick="saveEdit()" style="width: 100%;">Зберегти</button>
-        <button class="close-btn" onclick="document.getElementById('editModal').close()">Скасувати</button>
+        <button style="width:100%" onclick="this.closest('dialog').close()">Закрити</button>
     </dialog>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDFYWJavux5oegrdxT4CUV5DlXJqM6AiGo",
@@ -210,188 +162,180 @@
             projectId: "boiii-d61d9",
             storageBucket: "boiii-d61d9.firebasestorage.app",
             messagingSenderId: "671885912489",
-            appId: "1:671885912489:web:3b6cfbdefa98d974debcb8",
-            measurementId: "G-6VMNEVZXE1"
+            appId: "1:671885912489:web:3b6cfbdefa98d974debcb8"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        window.isAdmin = false;
-        let membersData = {};
-        let requestsData = {};
-        let scheduleData = {};
+        let currentUser = null;
+        let isAdmin = false;
+        let fighters = {};
 
-        const dict = {
-            uk: {
-                "t-login": "Увійти", "t-logout": "Вийти", "t-roster": "Список Учасників",
-                "t-admin-login": "Вхід для Адміна", "t-wins": "Перемоги", "t-losses": "Поразки", 
-                "t-year": "Рік: ", "t-view-fights": "Дивитись бої", "t-register": "Реєстрація",
-                "t-requests": "Заявки", "t-register-title": "Реєстрація учасника", "t-schedule": "Розклад",
-                "roles": { "fighter": "Боєць", "judge": "Суддя", "operator": "Оператор" }
-            },
-            en: {
-                "t-login": "Login", "t-logout": "Logout", "t-roster": "Members Roster",
-                "t-admin-login": "Admin Login", "t-wins": "Wins", "t-losses": "Losses", 
-                "t-year": "Born: ", "t-view-fights": "View Fights", "t-register": "Register",
-                "t-requests": "Requests", "t-register-title": "Member Registration", "t-schedule": "Schedule",
-                "roles": { "fighter": "Fighter", "judge": "Judge", "operator": "Operator" }
+        // --- ЛОГІКА ВХОДУ ---
+        window.handleLogin = () => {
+            const name = document.getElementById('loginName').value;
+            const pass = document.getElementById('loginPass').value;
+
+            // Перевірка на адміна
+            if (name === 'Admin' && pass === 'vlad01032014v') {
+                isAdmin = true;
+                currentUser = { name: 'Адміністратор' };
+                loginSuccess();
+                return;
+            }
+
+            // Перевірка на звичайного користувача
+            let foundUser = Object.values(fighters).find(f => f.name === name);
+            if (foundUser) {
+                isAdmin = false;
+                currentUser = foundUser;
+                loginSuccess();
+            } else {
+                alert("Користувача не знайдено або дані невірні!");
             }
         };
 
-        let currentLang = 'uk';
-        document.getElementById('langSelect').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            updateUI();
+        function loginSuccess() {
+            document.getElementById('loginModal').close();
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('regBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.getElementById('userInfo').innerText = `Привіт, ${currentUser.name}!`;
+            
+            if (isAdmin) {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+            }
             renderFighters();
-        });
-
-        function updateUI() {
-            document.querySelectorAll('[class^="t-"]').forEach(el => {
-                const key = Array.from(el.classList).find(c => c.startsWith('t-'));
-                if(dict[currentLang][key] && typeof dict[currentLang][key] === 'string') el.innerText = dict[currentLang][key];
-            });
         }
 
-        window.toggleTheme = function() {
-            const body = document.body;
-            body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
+        window.logout = () => {
+            location.reload();
         };
 
-        window.showLogin = () => document.getElementById('loginModal').showModal();
-        window.login = () => {
-            if (document.getElementById('username').value === 'Admin' && document.getElementById('password').value === 'vlad01032014v') {
-                window.isAdmin = true;
-                document.getElementById('loginModal').close();
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('registerBtn').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'inline-block';
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
-                renderFighters(); 
-            } else alert('Невірний пароль!');
-        };
-        window.logout = () => { window.isAdmin = false; location.reload(); };
-
-        window.showRegister = () => document.getElementById('registerModal').showModal();
-        window.toggleEquipmentField = () => document.getElementById('equipmentDiv').style.display = (document.getElementById('regRole').value === 'operator') ? 'block' : 'none';
-
+        // --- ДОДАВАННЯ УЧАСНИКІВ ---
+        // 1. Реєстрація (Заявка)
         window.submitRegistration = async () => {
-            const role = document.getElementById('regRole').value;
             const name = document.getElementById('regName').value;
-            const year = document.getElementById('regYear').value;
-            const fileInput = document.getElementById('regPhoto');
-            if(!name || !year || fileInput.files.length === 0) return alert("Заповніть всі поля!");
-            try {
-                const newReqRef = push(ref(db, 'requests'));
-                const file = fileInput.files[0];
-                const sRef = storageRef(storage, 'requests_photos/' + newReqRef.key);
-                await uploadBytes(sRef, file);
-                const photoUrl = await getDownloadURL(sRef);
-                await set(newReqRef, { role, name, birthYear: year, equipment: document.getElementById('regEquipment').value, photo: photoUrl });
-                alert("Заявку відправлено!");
-                document.getElementById('registerModal').close();
-            } catch (e) { alert(e.message); }
-        };
+            const file = document.getElementById('regPhoto').files[0];
+            if (!name || !file) return alert("Заповни все!");
 
-        // --- РАСПИСАНИЕ ---
-        window.showSchedule = () => {
-            renderSchedule();
-            document.getElementById('scheduleModal').showModal();
-        };
-        window.showAddSchedule = () => document.getElementById('addScheduleModal').showModal();
-        window.saveSchedule = async () => {
-            const time = document.getElementById('schTime').value;
-            const desc = document.getElementById('schDesc').value;
-            if(!time || !desc) return alert("Заповніть дані!");
-            await push(ref(db, 'schedule'), { time, desc });
-            document.getElementById('addScheduleModal').close();
-        };
-        onValue(ref(db, 'schedule'), (snapshot) => {
-            scheduleData = snapshot.val() || {};
-            if(document.getElementById('scheduleModal').open) renderSchedule();
-        });
-        window.renderSchedule = () => {
-            const list = document.getElementById('scheduleList');
-            list.innerHTML = '';
-            Object.keys(scheduleData).forEach(id => {
-                const s = scheduleData[id];
-                list.innerHTML += `
-                    <div class="schedule-item">
-                        <b style="color:var(--primary)">${s.time}</b>
-                        <p style="margin:5px 0">${s.desc}</p>
-                        ${window.isAdmin ? `<button style="background:red; font-size:10px" onclick="deleteSchedule('${id}')">Видалити</button>` : ''}
-                    </div>
-                `;
+            const newReqRef = push(ref(db, 'requests'));
+            const photoRef = sRef(storage, 'photos/' + newReqRef.key);
+            await uploadBytes(photoRef, file);
+            const url = await getDownloadURL(photoRef);
+
+            await set(newReqRef, {
+                name, 
+                role: document.getElementById('regRole').value,
+                birthYear: document.getElementById('regYear').value,
+                photo: url
             });
+            alert("Заявку відправлено адміну!");
+            document.getElementById('registerModal').close();
         };
-        window.deleteSchedule = (id) => remove(ref(db, `schedule/${id}`));
 
-        // --- ОСТАЛЬНАЯ ЛОГИКА ---
-        onValue(ref(db, 'requests'), (snap) => {
-            requestsData = snap.val() || {};
-            document.getElementById('reqCount').innerText = Object.keys(requestsData).length;
-        });
+        // 2. Адмін додає вручну
+        window.adminManualAdd = async () => {
+            const name = document.getElementById('manName').value;
+            const file = document.getElementById('manPhoto').files[0];
+            if (!name || !file) return alert("Заповни дані!");
+
+            const newRef = push(ref(db, 'fighters'));
+            const photoRef = sRef(storage, 'photos/' + newRef.key);
+            await uploadBytes(photoRef, file);
+            const url = await getDownloadURL(photoRef);
+
+            await set(newRef, {
+                name,
+                role: document.getElementById('manRole').value,
+                birthYear: document.getElementById('manYear').value,
+                photo: url,
+                wins: 0, losses: 0
+            });
+            alert("Додано успішно!");
+            document.getElementById('manualAddModal').close();
+        };
+
+        // --- ВІДОБРАЖЕННЯ ---
         onValue(ref(db, 'fighters'), (snap) => {
-            membersData = snap.val() || {};
+            fighters = snap.val() || {};
             renderFighters();
         });
 
-        window.showRequests = () => { renderRequests(); document.getElementById('requestsModal').showModal(); };
-        window.renderRequests = () => {
-            const list = document.getElementById('requestsList');
-            list.innerHTML = '';
-            Object.keys(requestsData).forEach(id => {
-                const r = requestsData[id];
-                list.innerHTML += `<div class="request-item">
-                    <img src="${r.photo}" style="width:50px; height:50px; border-radius:50%"> <b>${r.name}</b> (${r.role})
-                    <button onclick="approveRequest('${id}')">✅</button> <button onclick="rejectRequest('${id}')">❌</button>
-                </div>`;
-            });
-        };
-        window.approveRequest = async (id) => {
-            const r = requestsData[id];
-            await set(push(ref(db, 'fighters')), { ...r, wins:0, losses:0 });
-            await remove(ref(db, `requests/${id}`));
-        };
-        window.rejectRequest = (id) => remove(ref(db, `requests/${id}`));
+        onValue(ref(db, 'requests'), (snap) => {
+            const reqs = snap.val() || {};
+            document.getElementById('reqCount').innerText = Object.keys(reqs).length;
+        });
 
         window.renderFighters = () => {
             const grid = document.getElementById('fightersGrid');
             grid.innerHTML = '';
-            Object.keys(membersData).forEach(id => {
-                const f = membersData[id];
-                const roleKey = f.role || 'fighter';
-                let stats = roleKey === 'fighter' ? `<div class="stats"><span class="win">W: ${f.wins}</span><span class="loss">L: ${f.losses}</span></div>` : '';
+            Object.keys(fighters).forEach(id => {
+                const f = fighters[id];
+                const stats = f.role === 'fighter' ? `<p>🏆 ${f.wins} | ❌ ${f.losses}</p>` : '';
+                const adminControls = isAdmin ? `
+                    <button style="background:orange; padding:5px;" onclick="editFighter('${id}')">✏️</button>
+                    <button style="background:red; padding:5px;" onclick="deleteFighter('${id}')">🗑️</button>
+                ` : '';
+
                 grid.innerHTML += `
                     <div class="fighter-card">
                         <img src="${f.photo}" class="fighter-photo">
-                        <div class="role-badge">${dict[currentLang]['roles'][roleKey]}</div>
-                        <h3>${f.name}</h3>
+                        <div style="font-size:12px; color:gray;">${f.role.toUpperCase()}</div>
+                        <h3 style="margin:5px 0;">${f.name}</h3>
+                        <p style="font-size:13px;">Рік: ${f.birthYear}</p>
                         ${stats}
-                        ${window.isAdmin ? `<button onclick="openEditModal('${id}')">✏️ Редаг.</button> <button style="background:red" onclick="deleteMember('${id}')">🗑️ Видалити</button>` : ''}
-                    </div>`;
+                        ${adminControls}
+                    </div>
+                `;
             });
         };
 
-        window.openEditModal = (id) => {
-            const f = membersData[id];
-            document.getElementById('editId').value = id;
-            document.getElementById('editName').value = f.name;
-            document.getElementById('editModal').showModal();
+        // Адмінські функції видалення/редагування
+        window.deleteFighter = (id) => {
+            if(confirm("Видалити учасника?")) remove(ref(db, `fighters/${id}`));
         };
-        window.saveEdit = async () => {
-            const id = document.getElementById('editId').value;
-            await update(ref(db, `fighters/${id}`), {
-                name: document.getElementById('editName').value,
-                wins: document.getElementById('editWins').value,
-                losses: document.getElementById('editLosses').value
-            });
-            document.getElementById('editModal').close();
-        };
-        window.deleteMember = (id) => confirm("Видалити?") && remove(ref(db, `fighters/${id}`));
 
-        updateUI();
+        window.showRequests = () => {
+            const list = document.getElementById('requestsList');
+            list.innerHTML = '';
+            onValue(ref(db, 'requests'), (snap) => {
+                const data = snap.val() || {};
+                list.innerHTML = '';
+                Object.keys(data).forEach(id => {
+                    const r = data[id];
+                    list.innerHTML += `
+                        <div style="border-bottom:1px solid #ccc; padding:10px;">
+                            <b>${r.name}</b> (${r.role}) 
+                            <button class="btn-success" onclick="approve('${id}')">✅</button>
+                            <button class="btn-primary" onclick="reject('${id}')">❌</button>
+                        </div>
+                    `;
+                });
+            }, {onlyOnce: true});
+            document.getElementById('requestsModal').showModal();
+        };
+
+        window.approve = async (id) => {
+            onValue(ref(db, `requests/${id}`), async (snap) => {
+                const data = snap.val();
+                if(data) {
+                    await set(push(ref(db, 'fighters')), {...data, wins:0, losses:0});
+                    await remove(ref(db, `requests/${id}`));
+                }
+            }, {onlyOnce: true});
+        };
+
+        window.reject = (id) => remove(ref(db, `requests/${id}`));
+
+        // Тема
+        window.toggleTheme = () => {
+            const b = document.body;
+            b.getAttribute('data-theme') === 'dark' ? b.removeAttribute('data-theme') : b.setAttribute('data-theme', 'dark');
+        };
+
     </script>
 </body>
 </html>
