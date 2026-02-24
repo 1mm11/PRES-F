@@ -1,285 +1,63 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Правила Проекта</title>
-    <style>
-        :root {
-            --bg-color: #0f0f12;
-            --surface-color: #1a1a1e;
-            --primary-color: #6366f1;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --danger-color: #ef4444;
-        }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 30px 15px;
-        }
-
-        header {
-            margin-bottom: 40px;
-            border-bottom: 1px solid #2d2d35;
-            padding-bottom: 20px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
-
-        .search-box { width: 100%; }
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid #2d2d35;
-            background-color: var(--surface-color);
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus { border-color: var(--primary-color); }
-
-        .btn-add {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-add:hover { background-color: #4f46e5; transform: translateY(-1px); }
-
-        .section-card {
-            background-color: var(--surface-color);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .section-card h2 { margin-top: 0; color: var(--primary-color); font-size: 20px; }
-        .category-title { 
-            font-size: 13px; 
-            text-transform: uppercase; 
-            color: var(--text-muted); 
-            letter-spacing: 1px;
-            margin: 25px 0 12px 0;
-            font-weight: 700;
-        }
-
-        .rule-list { list-style: none; padding: 0; margin: 0; }
-        .rule-item {
-            background: #25252b;
-            margin-bottom: 8px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid transparent;
-            transition: 0.2s;
-        }
-        .rule-item:hover { border-left-color: var(--primary-color); background: #2d2d35; }
-
-        .rule-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-        .rule-head { display: flex; align-items: center; gap: 10px; }
-        .rule-num { font-weight: 800; color: var(--primary-color); font-size: 14px; }
-        .rule-text { font-size: 15px; font-weight: 500; }
-        .rule-punish { font-size: 12px; color: #f87171; background: rgba(239, 68, 68, 0.1); padding: 2px 8px; border-radius: 4px; width: fit-content; }
-
-        .del-btn { 
-            background: none; 
-            border: none; 
-            color: #475569; 
-            padding: 10px; 
-            font-size: 18px; 
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .del-btn:hover { color: var(--danger-color); }
-
-        /* Модалка добавления */
-        .modal-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100;
-        }
-        .modal { background: var(--surface-color); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
-        .modal h3 { margin-top: 0; margin-bottom: 20px; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end; }
-        .btn-cancel { background: #2d2d35; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-        
-        .hidden { display: none !important; }
-    </style>
+    <title>Fighter Database</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-<div class="container">
+<body class="light-theme">
     <header>
-        <div class="header-top">
-            <h1>📜 Правила Проекта</h1>
-            <button class="btn-add" onclick="openModal()">➕ Добавить правило</button>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Поиск по тексту, номеру или наказанию...">
-        </div>
+        <nav>
+            <div class="logo" id="lang-title">Список Бойцов</div>
+            <div class="controls">
+                <select id="lang-select">
+                    <option value="uk">UA</option>
+                    <option value="en">EN</option>
+                </select>
+                <button id="theme-toggle">🌙/☀️</button>
+                <button id="login-btn">Login</button>
+                <button id="admin-add-btn" class="hidden">Добавить бойца</button>
+            </div>
+        </nav>
     </header>
 
-    <div id="content">
-        </div>
-</div>
+    <main id="fighters-list">
+        </main>
 
-<div id="addModal" class="modal-bg">
-    <div class="modal">
-        <h3>Новое правило</h3>
-        <div style="display:flex; flex-direction:column; gap:12px;">
-            <select id="newCat">
-                <option value="mc_chat">Minecraft: Чат</option>
-                <option value="mc_game">Minecraft: Игра</option>
-                <option value="ds_chat">Discord: Чат</option>
-                <option value="ds_rep">Discord: Жалобы</option>
-            </select>
-            <input type="text" id="newNum" placeholder="Номер (например, 2.5)">
-            <input type="text" id="newDesc" placeholder="Суть нарушения">
-            <input type="text" id="newPun" placeholder="Наказание (например, бан)">
-        </div>
-        <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">Отмена</button>
-            <button class="btn-add" onclick="saveNewRule()">Сохранить</button>
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="lang-login-title">Вход для Админа</h2>
+            <input type="text" id="login-user" placeholder="Username">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button id="auth-submit">Войти</button>
+            <button class="close-modal">Отмена</button>
         </div>
     </div>
-</div>
 
-<script>
-    // Исходный список всех правил
-    const defaultData = [
-        { section: "Minecraft-сервер", catTitle: "Правила чата", catId: "mc_chat", num: "1.1", desc: "Оскорбление игроков", pun: "мут на 1 час" },
-        { section: "Minecraft-сервер", catTitle: "Правила чата", catId: "mc_chat", num: "1.2", desc: "Использование нецензурной лексики", pun: "мут на 30 мин." },
-        { section: "Minecraft-сервер", catTitle: "Правила чата", catId: "mc_chat", num: "1.3", desc: "Оскорбление администрации", pun: "мут на 1 час" },
-        { section: "Minecraft-сервер", catTitle: "Правила чата", catId: "mc_chat", num: "1.4", desc: "Переход на личности", pun: "мут на 1 час" },
-        { section: "Minecraft-сервер", catTitle: "Правила чата", catId: "mc_chat", num: "1.5", desc: "Реклама сторонних проектов", pun: "мут на 2 часа" },
-        { section: "Minecraft-сервер", catTitle: "Правила игры", catId: "mc_game", num: "2.1", desc: "Использование стороннего ПО (софтов)", pun: "пермбан" },
-        { section: "Minecraft-сервер", catTitle: "Правила игры", catId: "mc_game", num: "2.2", desc: "Использование багов", pun: "бан на 10 дней" },
-        { section: "Minecraft-сервер", catTitle: "Правила игры", catId: "mc_game", num: "2.3", desc: "Гриферство", pun: "бан на 5 дней" },
-        { section: "Minecraft-сервер", catTitle: "Правила игры", catId: "mc_game", num: "2.4", desc: "Убийство администрации", pun: "1 варн" },
-        { section: "Discord-сервер", catTitle: "Правила чата", catId: "ds_chat", num: "1.1", desc: "Оскорбление участников", pun: "мут на 1 час" },
-        { section: "Discord-сервер", catTitle: "Правила чата", catId: "ds_chat", num: "1.2", desc: "Использование нецензурной лексики", pun: "мут на 30 мин." },
-        { section: "Discord-сервер", catTitle: "Правила чата", catId: "ds_chat", num: "1.3", desc: "Оскорбление администрации", pun: "мут на 1 час" },
-        { section: "Discord-сервер", catTitle: "Правила чата", catId: "ds_chat", num: "1.4", desc: "Переход на личности", pun: "мут на 1 час" },
-        { section: "Discord-сервер", catTitle: "Правила чата", catId: "ds_chat", num: "1.5", desc: "Реклама сторонних проектов", pun: "мут на 2 часа" },
-        { section: "Discord-сервер", catTitle: "Жалобы", catId: "ds_rep", num: "2.1", desc: "Жалоба без причины", pun: "1 варн" }
-    ];
-
-    let rules = JSON.parse(localStorage.getItem('server_rules_final')) || defaultData;
-
-    function render() {
-        const content = document.getElementById('content');
-        content.innerHTML = '';
-
-        const sections = [...new Set(rules.map(r => r.section))];
-
-        sections.forEach(sName => {
-            const sectionHtml = document.createElement('div');
-            sectionHtml.className = 'section-card';
-            sectionHtml.innerHTML = `<h2>${sName}</h2>`;
+    <div id="fighter-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Боец</h2>
+            <input type="text" id="f-name" placeholder="Имя">
+            <input type="number" id="f-year" placeholder="Год рождения">
+            <input type="number" id="f-wins" placeholder="Побед">
+            <input type="number" id="f-losses" placeholder="Поражений">
+            <input type="file" id="f-photo" accept="image/*">
             
-            const catsInSec = [...new Set(rules.filter(r => r.section === sName).map(r => r.catTitle))];
-            
-            catsInSec.forEach(cName => {
-                sectionHtml.innerHTML += `<div class="category-title">${cName}</div>`;
-                const list = document.createElement('ul');
-                list.className = 'rule-list';
-                
-                rules.filter(r => r.section === sName && r.catTitle === cName).forEach(rule => {
-                    const globalIdx = rules.indexOf(rule);
-                    const li = document.createElement('li');
-                    li.className = 'rule-item';
-                    li.innerHTML = `
-                        <div class="rule-info">
-                            <div class="rule-head"><span class="rule-num">${rule.num}</span><span class="rule-text">${rule.desc}</span></div>
-                            <div class="rule-punish">${rule.pun}</div>
-                        </div>
-                        <button class="del-btn" onclick="deleteRule(${globalIdx})">✖</button>
-                    `;
-                    list.appendChild(li);
-                });
-                sectionHtml.appendChild(list);
-            });
-            content.appendChild(sectionHtml);
-        });
-    }
+            <div class="titles-section">
+                <h4>Титулы</h4>
+                <input type="text" id="t-text" placeholder="Текст титула">
+                <input type="color" id="t-color" value="#ffd700">
+                <input type="text" id="t-emoji" placeholder="Emoji (🏆)">
+                <button id="add-title-btn">Добавить титул в список</button>
+                <div id="temp-titles"></div>
+            </div>
 
-    function openModal() { document.getElementById('addModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+            <button id="save-fighter">Сохранить</button>
+            <button class="close-modal">Закрыть</button>
+        </div>
+    </div>
 
-    function saveNewRule() {
-        const sel = document.getElementById('newCat');
-        const num = document.getElementById('newNum').value;
-        const desc = document.getElementById('newDesc').value;
-        const pun = document.getElementById('newPun').value;
-
-        if(!num || !desc || !pun) return alert('Заполни все поля!');
-
-        const rule = {
-            section: sel.value.startsWith('mc') ? "Minecraft-сервер" : "Discord-сервер",
-            catTitle: sel.options[sel.selectedIndex].text.split(': ')[1],
-            catId: sel.value,
-            num: num,
-            desc: desc,
-            pun: pun
-        };
-        rules.push(rule);
-        updateStore();
-        closeModal();
-        // Сброс полей
-        document.getElementById('newNum').value = '';
-        document.getElementById('newDesc').value = '';
-        document.getElementById('newPun').value = '';
-    }
-
-    function deleteRule(idx) {
-        if(confirm('Удалить это правило?')) {
-            rules.splice(idx, 1);
-            updateStore();
-        }
-    }
-
-    function updateStore() {
-        localStorage.setItem('server_rules_final', JSON.stringify(rules));
-        render();
-    }
-
-    // Живой поиск
-    document.getElementById('searchInput').oninput = (e) => {
-        const v = e.target.value.toLowerCase();
-        document.querySelectorAll('.rule-item').forEach(el => {
-            el.classList.toggle('hidden', !el.textContent.toLowerCase().includes(v));
-        });
-    };
-
-    render();
-</script>
-
+    <script type="module" src="app.js"></script>
 </body>
 </html>
